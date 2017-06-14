@@ -71,89 +71,124 @@ accMagFeatures['acc_z_std'] = accMagDf['z'].rolling('1s').std()
 accMagFeatures['acc_z_var'] = accMagDf['z'].rolling('1s').var()
 accMagFeatures['acc_z_min'] = accMagDf['z'].rolling('1s').min()
 accMagFeatures['acc_z_max'] = accMagDf['z'].rolling('1s').max()
-accMagFeatures['start'] = accMagDf['start']
 accMagFeatures['label'] = accMagDf['label']
 
-# Loading Pressure Data
+# Loading Magnetometer Data
 
-drivingCarPressureFiles = glob.glob(drivingCarPath + "/0_Pressure*.csv")
-drivingCarPressureDf = pd.DataFrame()
+drivingCarMagFiles = glob.glob(drivingCarPath + "/0_Magnetometer*.csv")
+drivingCarMagDf = pd.DataFrame()
 list_ = []
-for file_ in drivingCarPressureFiles:
+for file_ in drivingCarMagFiles:
     df = pd.read_csv(file_, index_col=None, header=0)
     list_.append(df)
-drivingCarPressureDf = pd.concat(list_)
-drivingCarPressureDf['label'] = 'driving car'
+drivingCarMagDf = pd.concat(list_)
+drivingCarMagDf['label'] = 'driving car'
 
-transitPressureFiles = glob.glob(transitPath + "/0_Pressure*.csv")
-transitPressureDf = pd.DataFrame()
+transitMagFiles = glob.glob(transitPath + "/0_Magnetometer*.csv")
+transitMagDf = pd.DataFrame()
 list_ = []
-for file_ in transitPressureFiles:
+for file_ in transitMagFiles:
     df = pd.read_csv(file_, index_col=None, header=0)
     list_.append(df)
-transitPressureDf = pd.concat(list_)
-transitPressureDf['label'] = 'transit'
+transitMagDf = pd.concat(list_)
+transitMagDf['label'] = 'transit'
 
-pressureDfFrames = [drivingCarPressureDf, transitPressureDf]
+magDfFrames = [drivingCarMagDf, transitMagDf]
 
-pressureDf = pd.concat(pressureDfFrames)
+magDf = pd.concat(magDfFrames)
 
-# convert timestamps to datetime
-pressureDf['start'] = pd.to_datetime(pressureDf['start'])
-pressureDf['end'] = pd.to_datetime(pressureDf['end'])
+# Windowing Magnetometer Data
 
-# Windowing Pressure Data
+magV = (magDf['x'] * magDf['x']) + (magDf['y'] * magDf['y']) + (magDf['z'] * magDf['z'])
+magDf['mag_magnitude'] = magV
+magDf['mag_magnitude'] = magDf['mag_magnitude'].apply(math.sqrt)
 
-pressureFeatures = pd.DataFrame()
+# Convert timestamp to date time
 
-pressureDf['timestamps'] = pd.to_datetime(pressureDf['timestamps'])
-pressureDf.set_index(['timestamps'])
-pressureDf = pressureDf.sort_values(by='timestamps')
+magDf['start'] = pd.to_datetime(magDf['start'])
+magDf['end'] = pd.to_datetime(magDf['end'])
 
-pressureDfCal = pressureDf[['timestamps', 'start', 'pressure', 'label']]
-pressureDfCal = pressureDfCal.set_index(['timestamps'])
+print(len(magDf.index))
 
-pressureFeatures['pressure_mean'] = pressureDfCal['pressure'].rolling('1s').mean()
-pressureFeatures['pressure_std'] = pressureDfCal['pressure'].rolling('1s').std()
-pressureFeatures['pressure_var'] = pressureDfCal['pressure'].rolling('1s').var()
-pressureFeatures['pressure_min'] = pressureDfCal['pressure'].rolling('1s').min()
-pressureFeatures['pressure_max'] = pressureDfCal['pressure'].rolling('1s').max()
-pressureFeatures['start'] = pressureDfCal['start']
-pressureFeatures['label'] = pressureDfCal['label']
+magFeatures = pd.DataFrame()
+
+magDf['timestamps'] = pd.to_datetime(magDf['timestamps'])
+magDf.set_index(['timestamps'])
+magDf = magDf.sort_values(by='timestamps')
+
+magDf = magDf[['timestamps', 'start', 'mag_magnitude', 'x', 'y', 'z', 'label']]
+magDf = magDf.set_index(['timestamps'])
+
+magFeatures['mag_mag_mean'] = magDf['mag_magnitude'].rolling('1s').mean()
+magFeatures['mag_mag_std'] = magDf['mag_magnitude'].rolling('1s').std()
+magFeatures['mag_mag_var'] = magDf['mag_magnitude'].rolling('1s').var()
+magFeatures['mag_mag_min'] = magDf['mag_magnitude'].rolling('1s').min()
+magFeatures['mag_mag_max'] = magDf['mag_magnitude'].rolling('1s').max()
+magFeatures['mag_x_mean'] = magDf['x'].rolling('1s').mean()
+magFeatures['mag_x_std'] = magDf['x'].rolling('1s').std()
+magFeatures['mag_x_var'] = magDf['x'].rolling('1s').var()
+magFeatures['mag_x_min'] = magDf['x'].rolling('1s').min()
+magFeatures['mag_x_max'] = magDf['x'].rolling('1s').max()
+magFeatures['mag_y_mean'] = magDf['y'].rolling('1s').mean()
+magFeatures['mag_y_std'] = magDf['y'].rolling('1s').std()
+magFeatures['mag_y_var'] = magDf['y'].rolling('1s').var()
+magFeatures['mag_y_min'] = magDf['y'].rolling('1s').min()
+magFeatures['mag_y_max'] = magDf['y'].rolling('1s').max()
+magFeatures['mag_z_mean'] = magDf['z'].rolling('1s').mean()
+magFeatures['mag_z_std'] = magDf['z'].rolling('1s').std()
+magFeatures['mag_z_var'] = magDf['z'].rolling('1s').var()
+magFeatures['mag_z_min'] = magDf['z'].rolling('1s').min()
+magFeatures['mag_z_max'] = magDf['z'].rolling('1s').max()
+magFeatures['label'] = magDf['label']
 
 # Merge Features
 
 accMagFeatures['timestamps'] = accMagFeatures.index
-pressureFeatures['timestamps'] = pressureFeatures.index
+magFeatures['timestamps'] = magFeatures.index
 
 accMagFeatures = accMagFeatures.sort_values(by='timestamps')
-pressureFeatures = pressureFeatures.sort_values(by='timestamps')
+magFeatures = magFeatures.sort_values(by='timestamps')
 
-allFeatures = pd.merge_asof(accMagFeatures, pressureFeatures, on='timestamps', by='label',
+allFeatures = pd.merge_asof(accMagFeatures, magFeatures, on='timestamps', by='label',
                             tolerance=pd.Timedelta('100ms'))
 
 # Remove Null Features
 
 print(len(accMagFeatures.index))
-print(len(pressureFeatures.index))
+print(len(magFeatures.index))
 print(len(allFeatures.index))
 
-allFeatures = allFeatures[~(allFeatures.pressure_mean.isnull()) & ~(allFeatures.acc_mag_mean.isnull())]
+allFeatures = allFeatures[~(allFeatures.mag_mag_mean.isnull()) & ~(allFeatures.acc_mag_mean.isnull())]
 
 len(allFeatures.index)
 
-# Run Classification For Pressure & Accelerometer
+# Run Classification For Magnetometer & Accelerometer
 h2o.init()
 h2o.remove_all()
 
 allFeatures = h2o.H2OFrame(allFeatures)
 
 continuous_feature_columns = [
-    'pressure_mean',
-    'pressure_std',
-    'pressure_var',
-    'pressure_min',
-    'pressure_max',
+    'mag_mag_mean',
+    'mag_mag_std',
+    'mag_mag_var',
+    'mag_mag_min',
+    'mag_mag_max',
+    'mag_x_mean',
+    'mag_x_std',
+    'mag_x_var',
+    'mag_x_min',
+    'mag_x_max',
+    'mag_y_mean',
+    'mag_y_std',
+    'mag_y_var',
+    'mag_y_min',
+    'mag_y_max',
+    'mag_z_mean',
+    'mag_z_std',
+    'mag_z_var',
+    'mag_z_min',
+    'mag_z_max',
     'acc_mag_mean',
     'acc_mag_std',
     'acc_mag_var',
@@ -178,7 +213,7 @@ continuous_feature_columns = [
 ]
 
 random_forest_model = h2o.H2ORandomForestEstimator(
-    model_id="DrivingTransitAccelerometerPressure",
+    model_id="DrivingTransitAccelerometerMagnetometer",
     ntrees=20,
     max_depth=10,
     min_rows=4,
