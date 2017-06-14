@@ -149,11 +149,11 @@ h2o.remove_all()
 allFeatures = h2o.H2OFrame(allFeatures)
 
 continuous_feature_columns = [
-    # 'pressure_mean',
-    # 'pressure_std',
-    # 'pressure_var',
-    # 'pressure_min',
-    # 'pressure_max',
+    'pressure_mean',
+    'pressure_std',
+    'pressure_var',
+    'pressure_min',
+    'pressure_max',
     'acc_mag_mean',
     'acc_mag_std',
     'acc_mag_var',
