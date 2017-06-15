@@ -166,7 +166,7 @@ continuous_feature_columns = [
 ]
 
 random_forest_model = h2o.H2ORandomForestEstimator(
-    model_id="TransitLabeledAccelerometer",
+    model_id="AllActivitiesAccelerometer",
     ntrees=20,
     max_depth=10,
     min_rows=4,
