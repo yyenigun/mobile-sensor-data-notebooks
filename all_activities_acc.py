@@ -3,7 +3,17 @@ import math as math
 import glob
 from h2o import h2o
 
-# Loading Accelerometer Data for Bus, Light Rail, Standing, Walking
+# Loading Accelerometer Data for Driving Car, Bus, Light Rail, Standing, Walking
+
+drivingCarPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Driving Car/csv'
+drivingCarFiles = glob.glob(drivingCarPath + "/0_Accelerometer*.csv")
+accDfCar = pd.DataFrame()
+list_ = []
+for file_ in drivingCarFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfCar = pd.concat(list_)
+accDfCar['label'] = 'driving car'
 
 busPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Bus*'
 busFiles = glob.glob(busPath + "/trim_0_Accelerometer*.csv")
@@ -45,8 +55,37 @@ for file_ in walkingFiles:
 accDfWalking = pd.concat(list_)
 accDfWalking['label'] = 'walking'
 
+eatingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Eating-Drinking/csv'
+eatingFiles = glob.glob(eatingPath + "/0_Accelerometer*.csv")
+accDfEating = pd.DataFrame()
+list_ = []
+for file_ in eatingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfEating = pd.concat(list_)
+accDfEating['label'] = 'eating'
 
-accDfFrames = [accDfBus, accDfLightRail, accDfStanding, accDfWalking]
+elevatorPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Elevator-Escalator/csv-segments/dir_Elevator*'
+elevatorFiles = glob.glob(elevatorPath + "/trim_0_Accelerometer*.csv")
+accDfElevator = pd.DataFrame()
+list_ = []
+for file_ in elevatorFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfElevator = pd.concat(list_)
+accDfElevator['label'] = 'elevator'
+
+escalatorPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Elevator-Escalator/csv-segments/dir_Escalator*'
+escalatorFiles = glob.glob(escalatorPath + "/trim_0_Accelerometer*.csv")
+accDfEscalator = pd.DataFrame()
+list_ = []
+for file_ in escalatorFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfEscalator = pd.concat(list_)
+accDfEscalator['label'] = 'escalator'
+
+accDfFrames = [accDfCar, accDfBus, accDfLightRail, accDfStanding, accDfWalking, accDfEating, accDfElevator, accDfEscalator]
 
 accDf = pd.concat(accDfFrames)
 
