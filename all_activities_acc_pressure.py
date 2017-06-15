@@ -3,7 +3,7 @@ import math as math
 import glob
 from h2o import h2o
 
-# Loading Accelerometer Data
+# Loading Accelerometer Data for Driving Car, Bus, Light Rail, Standing, Walking
 
 drivingCarPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Driving Car/csv'
 drivingCarFiles = glob.glob(drivingCarPath + "/0_Accelerometer*.csv")
@@ -15,17 +15,78 @@ for file_ in drivingCarFiles:
 accDfCar = pd.concat(list_)
 accDfCar['label'] = 'driving car'
 
-transitPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/csv'
-transitFiles = glob.glob(transitPath + "/0_Accelerometer*.csv")
-accDfTransit = pd.DataFrame()
+busPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Bus*'
+busFiles = glob.glob(busPath + "/trim_0_Accelerometer*.csv")
+accDfBus = pd.DataFrame()
 list_ = []
-for file_ in transitFiles:
+for file_ in busFiles:
     df = pd.read_csv(file_, index_col=None, header=0)
     list_.append(df)
-accDfTransit = pd.concat(list_)
-accDfTransit['label'] = 'transit'
+accDfBus = pd.concat(list_)
+accDfBus['label'] = 'bus'
 
-accDfFrames = [accDfCar, accDfTransit]
+lightRailPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Light_Rail*'
+lightRailFiles = glob.glob(lightRailPath + "/trim_0_Accelerometer*.csv")
+accDfLightRail = pd.DataFrame()
+list_ = []
+for file_ in lightRailFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfLightRail = pd.concat(list_)
+accDfLightRail['label'] = 'light rail'
+
+standingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Standing*'
+standingFiles = glob.glob(standingPath + "/trim_0_Accelerometer*.csv")
+accDfStanding = pd.DataFrame()
+list_ = []
+for file_ in standingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfStanding = pd.concat(list_)
+accDfStanding['label'] = 'standing'
+
+walkingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Walking*'
+walkingFiles = glob.glob(walkingPath + "/trim_0_Accelerometer*.csv")
+accDfWalking = pd.DataFrame()
+list_ = []
+for file_ in walkingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfWalking = pd.concat(list_)
+accDfWalking['label'] = 'walking'
+
+eatingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Eating-Drinking/csv'
+eatingFiles = glob.glob(eatingPath + "/0_Accelerometer*.csv")
+accDfEating = pd.DataFrame()
+list_ = []
+for file_ in eatingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfEating = pd.concat(list_)
+accDfEating['label'] = 'eating'
+
+elevatorPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Elevator-Escalator/csv-segments/dir_Elevator*'
+elevatorFiles = glob.glob(elevatorPath + "/trim_0_Accelerometer*.csv")
+accDfElevator = pd.DataFrame()
+list_ = []
+for file_ in elevatorFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfElevator = pd.concat(list_)
+accDfElevator['label'] = 'elevator'
+
+escalatorPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Elevator-Escalator/csv-segments/dir_Escalator*'
+escalatorFiles = glob.glob(escalatorPath + "/trim_0_Accelerometer*.csv")
+accDfEscalator = pd.DataFrame()
+list_ = []
+for file_ in escalatorFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfEscalator = pd.concat(list_)
+accDfEscalator['label'] = 'escalator'
+
+accDfFrames = [accDfCar, accDfBus, accDfLightRail, accDfStanding, accDfWalking, accDfEating, accDfElevator,
+               accDfEscalator]
 
 accDf = pd.concat(accDfFrames)
 
@@ -73,6 +134,8 @@ accMagFeatures['acc_z_min'] = accMagDf['z'].rolling('1s').min()
 accMagFeatures['acc_z_max'] = accMagDf['z'].rolling('1s').max()
 accMagFeatures['label'] = accMagDf['label']
 
+len(accMagFeatures.index)
+
 # Loading Pressure Data
 
 drivingCarPressureFiles = glob.glob(drivingCarPath + "/0_Pressure*.csv")
@@ -84,16 +147,71 @@ for file_ in drivingCarPressureFiles:
 drivingCarPressureDf = pd.concat(list_)
 drivingCarPressureDf['label'] = 'driving car'
 
-transitPressureFiles = glob.glob(transitPath + "/0_Pressure*.csv")
-transitPressureDf = pd.DataFrame()
+busPressureFiles = glob.glob(busPath + "/trim_0_Pressure*.csv")
+busPressureDf = pd.DataFrame()
 list_ = []
-for file_ in transitPressureFiles:
+for file_ in busPressureFiles:
     df = pd.read_csv(file_, index_col=None, header=0)
     list_.append(df)
-transitPressureDf = pd.concat(list_)
-transitPressureDf['label'] = 'transit'
+busPressureDf = pd.concat(list_)
+busPressureDf['label'] = 'bus'
 
-pressureDfFrames = [drivingCarPressureDf, transitPressureDf]
+lightRailPressureFiles = glob.glob(lightRailPath + "/trim_0_Pressure*.csv")
+lightRailPressureDf = pd.DataFrame()
+list_ = []
+for file_ in lightRailPressureFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+lightRailPressureDf = pd.concat(list_)
+lightRailPressureDf['label'] = 'light rail'
+
+standingPressureFiles = glob.glob(standingPath + "/trim_0_Pressure*.csv")
+standingPressureDf = pd.DataFrame()
+list_ = []
+for file_ in standingPressureFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+standingPressureDf = pd.concat(list_)
+standingPressureDf['label'] = 'standing'
+
+walkingPressureFiles = glob.glob(walkingPath + "/trim_0_Pressure*.csv")
+walkingPressureDf = pd.DataFrame()
+list_ = []
+for file_ in walkingPressureFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+walkingPressureDf = pd.concat(list_)
+walkingPressureDf['label'] = 'walking'
+
+eatingPressureFiles = glob.glob(eatingPath + "/0_Pressure*.csv")
+eatingPressureDf = pd.DataFrame()
+list_ = []
+for file_ in eatingPressureFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+eatingPressureDf = pd.concat(list_)
+eatingPressureDf['label'] = 'eating'
+
+elevatorPressureFiles = glob.glob(elevatorPath + "/trim_0_Pressure*.csv")
+elevatorPressureDf = pd.DataFrame()
+list_ = []
+for file_ in elevatorPressureFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+elevatorPressureDf = pd.concat(list_)
+elevatorPressureDf['label'] = 'elevator'
+
+escalatorPressureFiles = glob.glob(escalatorPath + "/trim_0_Pressure*.csv")
+escalatorPressureDf = pd.DataFrame()
+list_ = []
+for file_ in escalatorPressureFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+escalatorPressureDf = pd.concat(list_)
+escalatorPressureDf['label'] = 'escalator'
+
+pressureDfFrames = [drivingCarPressureDf, busPressureDf, lightRailPressureDf, standingPressureDf, walkingPressureDf,
+                    eatingPressureDf, elevatorPressureDf, escalatorPressureDf]
 
 pressureDf = pd.concat(pressureDfFrames)
 
@@ -117,7 +235,6 @@ pressureFeatures['pressure_std'] = pressureDfCal['pressure'].rolling('1s').std()
 pressureFeatures['pressure_var'] = pressureDfCal['pressure'].rolling('1s').var()
 pressureFeatures['pressure_min'] = pressureDfCal['pressure'].rolling('1s').min()
 pressureFeatures['pressure_max'] = pressureDfCal['pressure'].rolling('1s').max()
-pressureFeatures['start'] = pressureDfCal['start']
 pressureFeatures['label'] = pressureDfCal['label']
 
 # Merge Features
@@ -148,6 +265,11 @@ h2o.remove_all()
 allFeatures = h2o.H2OFrame(allFeatures)
 
 continuous_feature_columns = [
+    'pressure_mean',
+    'pressure_std',
+    'pressure_var',
+    'pressure_min',
+    'pressure_max',
     'acc_mag_mean',
     'acc_mag_std',
     'acc_mag_var',
@@ -172,7 +294,7 @@ continuous_feature_columns = [
 ]
 
 random_forest_model = h2o.H2ORandomForestEstimator(
-    model_id="DrivingTransitAccelerometer",
+    model_id="AllActivitiesAccelerometerPressure",
     ntrees=20,
     max_depth=10,
     min_rows=4,
