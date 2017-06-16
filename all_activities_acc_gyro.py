@@ -3,7 +3,7 @@ import math as math
 import glob
 from h2o import h2o
 
-# Loading Accelerometer Data
+# Loading Accelerometer Data for Driving Car, Bus, Light Rail, Standing, Walking
 
 drivingCarPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Driving Car/csv'
 drivingCarFiles = glob.glob(drivingCarPath + "/0_Accelerometer*.csv")
@@ -15,17 +15,77 @@ for file_ in drivingCarFiles:
 accDfCar = pd.concat(list_)
 accDfCar['label'] = 'driving car'
 
-transitPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/csv'
-transitFiles = glob.glob(transitPath + "/0_Accelerometer*.csv")
-accDfTransit = pd.DataFrame()
+busPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Bus*'
+busFiles = glob.glob(busPath + "/trim_0_Accelerometer*.csv")
+accDfBus = pd.DataFrame()
 list_ = []
-for file_ in transitFiles:
+for file_ in busFiles:
     df = pd.read_csv(file_, index_col=None, header=0)
     list_.append(df)
-accDfTransit = pd.concat(list_)
-accDfTransit['label'] = 'transit'
+accDfBus = pd.concat(list_)
+accDfBus['label'] = 'bus'
 
-accDfFrames = [accDfCar, accDfTransit]
+lightRailPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Light_Rail*'
+lightRailFiles = glob.glob(lightRailPath + "/trim_0_Accelerometer*.csv")
+accDfLightRail = pd.DataFrame()
+list_ = []
+for file_ in lightRailFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfLightRail = pd.concat(list_)
+accDfLightRail['label'] = 'light rail'
+
+standingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Standing*'
+standingFiles = glob.glob(standingPath + "/trim_0_Accelerometer*.csv")
+accDfStanding = pd.DataFrame()
+list_ = []
+for file_ in standingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfStanding = pd.concat(list_)
+accDfStanding['label'] = 'standing'
+
+walkingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Driving-Transit/Transit/labeled_segments/dir_Walking*'
+walkingFiles = glob.glob(walkingPath + "/trim_0_Accelerometer*.csv")
+accDfWalking = pd.DataFrame()
+list_ = []
+for file_ in walkingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfWalking = pd.concat(list_)
+accDfWalking['label'] = 'walking'
+
+eatingPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Eating-Drinking/csv'
+eatingFiles = glob.glob(eatingPath + "/0_Accelerometer*.csv")
+accDfEating = pd.DataFrame()
+list_ = []
+for file_ in eatingFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfEating = pd.concat(list_)
+accDfEating['label'] = 'eating'
+
+elevatorPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Elevator-Escalator/csv-segments/dir_Elevator*'
+elevatorFiles = glob.glob(elevatorPath + "/trim_0_Accelerometer*.csv")
+accDfElevator = pd.DataFrame()
+list_ = []
+for file_ in elevatorFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfElevator = pd.concat(list_)
+accDfElevator['label'] = 'elevator'
+
+escalatorPath = r'/Users/yalcin.yenigun/dev/workspaces/gsu/Sample Dataset/Elevator-Escalator/csv-segments/dir_Escalator*'
+escalatorFiles = glob.glob(escalatorPath + "/trim_0_Accelerometer*.csv")
+accDfEscalator = pd.DataFrame()
+list_ = []
+for file_ in escalatorFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+accDfEscalator = pd.concat(list_)
+accDfEscalator['label'] = 'escalator'
+
+accDfFrames = [accDfCar, accDfBus, accDfLightRail, accDfStanding, accDfWalking, accDfEating, accDfElevator, accDfEscalator]
 
 accDf = pd.concat(accDfFrames)
 
@@ -73,8 +133,10 @@ accMagFeatures['acc_z_min'] = accMagDf['z'].rolling('1s').min()
 accMagFeatures['acc_z_max'] = accMagDf['z'].rolling('1s').max()
 accMagFeatures['label'] = accMagDf['label']
 
-# Loading Gyroscope Data
+len(accMagFeatures.index)
 
+
+# Loading Gyroscope Data
 drivingCarGyroFiles = glob.glob(drivingCarPath + "/0_Gyroscope*.csv")
 drivingCarGyroDf = pd.DataFrame()
 list_ = []
@@ -84,16 +146,70 @@ for file_ in drivingCarGyroFiles:
 drivingCarGyroDf = pd.concat(list_)
 drivingCarGyroDf['label'] = 'driving car'
 
-transitGyroFiles = glob.glob(transitPath + "/0_Gyroscope*.csv")
-transitGyroDf = pd.DataFrame()
+busGyroFiles = glob.glob(busPath + "/trim_0_Gyroscope*.csv")
+busGyroDf = pd.DataFrame()
 list_ = []
-for file_ in transitGyroFiles:
+for file_ in busGyroFiles:
     df = pd.read_csv(file_, index_col=None, header=0)
     list_.append(df)
-transitGyroDf = pd.concat(list_)
-transitGyroDf['label'] = 'transit'
+busGyroDf = pd.concat(list_)
+busGyroDf['label'] = 'bus'
 
-gyroDfFrames = [drivingCarGyroDf, transitGyroDf]
+lightRailGyroFiles = glob.glob(lightRailPath + "/trim_0_Gyroscope*.csv")
+lightRailGyroDf = pd.DataFrame()
+list_ = []
+for file_ in lightRailGyroFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+lightRailGyroDf = pd.concat(list_)
+lightRailGyroDf['label'] = 'light rail'
+
+standingGyroFiles = glob.glob(standingPath + "/trim_0_Gyroscope*.csv")
+standingGyroDf = pd.DataFrame()
+list_ = []
+for file_ in standingGyroFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+standingGyroDf = pd.concat(list_)
+standingGyroDf['label'] = 'standing'
+
+walkingGyroFiles = glob.glob(walkingPath + "/trim_0_Gyroscope*.csv")
+walkingGyroDf = pd.DataFrame()
+list_ = []
+for file_ in walkingGyroFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+walkingGyroDf = pd.concat(list_)
+walkingGyroDf['label'] = 'walking'
+
+eatingGyroFiles = glob.glob(eatingPath + "/0_Gyroscope*.csv")
+eatingGyroDf = pd.DataFrame()
+list_ = []
+for file_ in eatingGyroFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+eatingGyroDf = pd.concat(list_)
+eatingGyroDf['label'] = 'eating'
+
+elevatorGyroFiles = glob.glob(elevatorPath + "/trim_0_Gyroscope*.csv")
+elevatorGyroDf = pd.DataFrame()
+list_ = []
+for file_ in elevatorGyroFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+elevatorGyroDf = pd.concat(list_)
+elevatorGyroDf['label'] = 'elevator'
+
+escalatorGyroFiles = glob.glob(escalatorPath + "/trim_0_Gyroscope*.csv")
+escalatorGyroDf = pd.DataFrame()
+list_ = []
+for file_ in escalatorGyroFiles:
+    df = pd.read_csv(file_, index_col=None, header=0)
+    list_.append(df)
+escalatorGyroDf = pd.concat(list_)
+escalatorGyroDf['label'] = 'escalator'
+
+gyroDfFrames = [drivingCarGyroDf, busGyroDf, lightRailGyroDf, standingGyroDf, walkingGyroDf, eatingGyroDf, elevatorGyroDf, escalatorGyroDf]
 
 gyroDf = pd.concat(gyroDfFrames)
 
@@ -118,6 +234,8 @@ gyroDf = gyroDf.sort_values(by='timestamps')
 
 gyroDf = gyroDf[['timestamps', 'start', 'gyro_magnitude', 'x', 'y', 'z', 'label']]
 gyroDf = gyroDf.set_index(['timestamps'])
+
+# Feature extraction
 
 gyroFeatures['gyro_mag_mean'] = gyroDf['gyro_magnitude'].rolling('1s').mean()
 gyroFeatures['gyro_mag_std'] = gyroDf['gyro_magnitude'].rolling('1s').std()
@@ -162,7 +280,8 @@ allFeatures = allFeatures[~(allFeatures.gyro_mag_mean.isnull()) & ~(allFeatures.
 
 len(allFeatures.index)
 
-# Run Classification For Magnetometer & Accelerometer
+# Run Classification For Pressure & Accelerometer
+
 h2o.init()
 h2o.remove_all()
 
@@ -212,7 +331,7 @@ continuous_feature_columns = [
 ]
 
 random_forest_model = h2o.H2ORandomForestEstimator(
-    model_id="DrivingTransitAccelerometerGyroscope",
+    model_id="AllActivitiesAccelerometerGyroscope",
     ntrees=20,
     max_depth=10,
     min_rows=4,
