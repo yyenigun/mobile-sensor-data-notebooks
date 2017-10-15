@@ -167,10 +167,10 @@ continuous_feature_columns = [
 
 random_forest_model = h2o.H2ORandomForestEstimator(
     model_id="AllActivitiesAccelerometer",
-    ntrees=20,
+    ntrees=10,
     max_depth=10,
     min_rows=4,
-    nfolds=10,
+    nfolds=5,
     seed=12345
 )
 
